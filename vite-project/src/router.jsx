@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Navigate, createBrowserRouter } from "react-router-dom";
 import Dashboard from "./views/Dashboard";
 import Surveys from "./views/Surveys";
 import Login from "./views/Login";
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
             {
                 path: '/',
                 element: <Dashboard />
+            },
+            {
+                path: '/dashboard',
+                element: <Navigate to="/" />
             },
             {
                 path: '/surveys',
