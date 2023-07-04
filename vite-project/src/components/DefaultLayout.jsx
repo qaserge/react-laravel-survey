@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import { NavLink, Outlet } from 'react-router-dom'
-import { userStateContext } from '../views/contexts/ContextProvider'
+import { NavLink, Navigate, Outlet } from 'react-router-dom'
+import { useStateContext } from '../views/contexts/ContextProvider'
 
 // const user = {
 //   name: 'Tom Cook',
@@ -24,11 +24,15 @@ function classNames(...classes) {
 
 export default function DefaultLayout() {
 
-    const { currentUser, userToken } = userStateContext();
+    const { currentUser, userToken } = useStateContext();
 
     const logout = (ev) => {
         ev.preventDefault();
         console.log("Logout");
+    }
+
+    if(!userToken) {
+        return <Navigate to='login' />
     }
 
     return (
@@ -48,8 +52,7 @@ export default function DefaultLayout() {
                                             />
                                         </div>
                                         <div className="hidden md:block">
-                                            <div className="ml-10 flex items-baseline space-x-4">
-                                                {console.log(userToken)}
+                                            <div className="ml-10 flex items-baseline space-x-4">                                                
                                                 {navigation.map((item) => (
                                                     <NavLink
                                                         key={item.name}
