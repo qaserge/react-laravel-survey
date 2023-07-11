@@ -4,12 +4,6 @@ import { Bars3Icon, BellIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/ou
 import { NavLink, Navigate, Outlet } from 'react-router-dom'
 import { useStateContext } from '../views/contexts/ContextProvider'
 
-// const user = {
-//   name: 'Tom Cook',
-//   email: 'tom@example.com',
-//   imageUrl:
-//     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-// }
 const navigation = [
     { name: 'Dashboard', to: '/' },
     { name: 'Surveys', to: '/surveys' },
