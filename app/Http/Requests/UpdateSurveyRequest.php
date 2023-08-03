@@ -11,7 +11,12 @@ class UpdateSurveyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $survey = $this->route('survey'); // возвратит survey model
+
+        if ($this->user()->id !== $survey->user_id) {
+            return false;
+        }
+        return true;
     }
 
     /**
