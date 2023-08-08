@@ -3,8 +3,14 @@ import PageComponent from '../components/PageComponent'
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import TButton from '../components/core/TButton';
 import axiosClient from "../axios.js";
+import { useStateContext } from './contexts/ContextProvider';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function SurveyView() {
+    const { showToast } = useStateContext();
+    const navigate = useNavigate();
+    const { id } = useParams();
+
     const [survey, setSurvey] = useState({
         title: "",
         slug: "",
@@ -16,22 +22,55 @@ export default function SurveyView() {
         questions: [],
     });
 
+    const [error, setError] = useState("");
+
     const onImageChoose = (ev) => {
-        console.log('choose');
+        const file = ev.target.files[0];
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            setSurvey({
+                ...survey,
+                image: file,
+                image_url: reader.result,
+            });
+
+            ev.target.value = "";
+        };
+        reader.readAsDataURL(file);
     };
 
     const onSubmit = (ev) => {
         ev.preventDefault();
-        axiosClient.post('/survey', 
-        {
-            title: 'test title 1',
-            description: 'description 1',
-            expire_date: '2023-11-04',
-            status: true,
-            questions: []
+
+        const payload = { ...survey };
+        if (payload.image) {
+            payload.image = payload.image_url;
         }
-        );
-        console.log('submit');
+        delete payload.image_url;
+        let res = null;
+        if (id) {
+            res = axiosClient.put(`/survey/${id}`, payload);
+        } else {
+            res = axiosClient.post("/survey", payload);
+        }
+
+        res
+            .then((res) => {
+                console.log(res);
+                navigate("/surveys");
+                if (id) {
+                    showToast("The survey was updated");
+                } else {
+                    showToast("The survey was created");
+                }
+            })
+            .catch((err) => {
+                if (err && err.response) {
+                    setError(err.response.data.message);
+                }
+                console.log(err, err.response);
+            });
     };
 
     return (
@@ -39,6 +78,9 @@ export default function SurveyView() {
             <form action="#" method='POST' onSubmit={onSubmit}>
                 <div className='shadow sm:overflow-hidden sm:rounded-md'>
                     <div className='space-y-6 bg-white px-4 py-5 sm:p-6'>
+                        {error && (
+                            <div className="bg-red-500 text-white py-3 px-3">{error}</div>
+                        )}
 
                         {/*Image*/}
                         <div>
