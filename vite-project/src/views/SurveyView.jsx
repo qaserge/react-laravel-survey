@@ -5,6 +5,8 @@ import TButton from '../components/core/TButton';
 import axiosClient from "../axios.js";
 import { useStateContext } from './contexts/ContextProvider';
 import { useNavigate, useParams } from 'react-router-dom';
+import SurveyQuestions from '../components/SurveyQuestions';
+import { useEffect } from "react";
 
 export default function SurveyView() {
     const { showToast } = useStateContext();
@@ -72,6 +74,38 @@ export default function SurveyView() {
                 console.log(err, err.response);
             });
     };
+
+    function onQuestionsUpdate(questions) {
+        setSurvey({
+            ...survey,
+            questions,
+        });
+    }
+
+    const addQuestion = () => {
+        survey.questions.push({
+            id: uuidv4(),
+            type: "text",
+            question: "",
+            description: "",
+            data: {},
+        });
+        setSurvey({ ...survey });
+    };
+
+    const onDelete = () => {
+
+    }
+
+    useEffect(() => {
+        if (id) {
+            setLoading(true);
+            axiosClient.get(`/survey/${id}`).then(({ data }) => {
+                setSurvey(data.data);
+                setLoading(false);
+            });
+        }
+    }, []);
 
     return (
         <PageComponent title="Create new Survey">
@@ -206,6 +240,14 @@ export default function SurveyView() {
                             </div>
                         </div>
                         {/*Active*/}
+
+                        <button type="button" onClick={addQuestion}>
+                            Add question
+                        </button>
+                        <SurveyQuestions
+                            questions={survey.questions}
+                            onQuestionsUpdate={onQuestionsUpdate}
+                        />
 
                     </div>
                     <div className="bg-gray-50 px-4 py-3 text-right sm:px-6">
